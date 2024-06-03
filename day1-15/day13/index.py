@@ -62,21 +62,7 @@ class DownloadTask(Thread):
         super.__init__()
         self.__filename = filename
 
-class Account:
-    def __init__(self):
-        self.__balance = 0
-        self._lock = Lock()
-    def deposit(self,money):
-        self._lock.acquire()
-        try:
-            new_balance = self.__balance + money
-            sleep(0.01)
-            self._balance = new_balance
-        finally:
-            self._lock.release()
-    @property
-    def balance(self):
-        return self.__balance
+
 
 class AddMoneyThread(Thread):
     def __init__(self,account,money):
@@ -85,6 +71,45 @@ class AddMoneyThread(Thread):
         self._money = money
     def run(self):
         self.__account.deposit(self._money)
+
+# class Account:
+#     def __init__(self):
+#         self.__balance = 0
+#         self._lock = Lock()
+#     def deposit(self,money):
+#         self._lock.acquire()
+#         try:
+#             new_balance = self.__balance + money
+#             sleep(0.01)
+#             self._balance = new_balance
+#         finally:
+#             self._lock.release()
+#     @property
+#     def balance(self):
+#         return self.__balance
+
+
+class Account(object):
+
+    def __init__(self):
+        self._balance = 0
+        self._lock = Lock()
+
+    def deposit(self, money):
+        # 先获取锁才能执行后续的代s码
+        self._lock.acquire()
+        try:
+            new_balance = self._balance + money
+            sleep(0.01)
+            self._balance = new_balance
+        finally:
+            # 在finally中执行释放锁的操作保证正常异常锁都能释放
+            self._lock.release()
+
+    @property
+    def balance(self):
+        return self._balance
+
     
 def main3():
     account = Account()

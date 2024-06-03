@@ -41,3 +41,6 @@ def main1():
             json_str = dumps(my_dict)
             self.__client.send(json_str.encode('utf-8'))
             self.__client.close()
+
+
+# 使用套接字开启服务监听
